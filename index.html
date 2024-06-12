@@ -1,61 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blackjack Card Counting PWA</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Card Counting PWA</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div id="home-screen" class="screen">
-    <h1>Blackjack Card Counting PWA</h1>
-    <div class="form-group">
-      <label for="num-players">Number of Players (excluding dealer):</label>
-      <input type="number" id="num-players" min="1" max="10">
+    <div class="container">
+        <h1>Blackjack Card Counting PWA</h1>
+        <div id="game">
+            <div id="players">
+                <div id="dealer" class="player">Dealer<br><span class="hand-value">Hand Value: 0</span></div>
+            </div>
+            <div id="controls">
+                <div id="buttons">
+                    <button class="card-btn" data-value="1">1</button>
+                    <button class="card-btn" data-value="2">2</button>
+                    <button class="card-btn" data-value="3">3</button>
+                    <button class="card-btn" data-value="4">4</button>
+                    <button class="card-btn" data-value="5">5</button>
+                    <button class="card-btn" data-value="6">6</button>
+                    <button class="card-btn" data-value="7">7</button>
+                    <button class="card-btn" data-value="8">8</button>
+                    <button class="card-btn" data-value="9">9</button>
+                    <button class="card-btn" data-value="10">10</button>
+                    <button class="card-btn" data-value="J">J</button>
+                    <button class="card-btn" data-value="Q">Q</button>
+                    <button class="card-btn" data-value="K">K</button>
+                    <button class="card-btn" data-value="A">A</button>
+                </div>
+                <div id="actions">
+                    <button id="next-player">Next Player</button>
+                    <button id="round-over">Round Over</button>
+                    <button id="deck-shuffle">Deck Shuffle</button>
+                    <button id="delete-entry">Delete Entry</button>
+                </div>
+            </div>
+            <div id="status">
+                <p>Running Count: <span id="running-count">0</span></p>
+                <p>Suggested Play: <span id="suggested-play">H</span></p>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-      <label for="num-decks">Number of Decks:</label>
-      <input type="number" id="num-decks" min="1" max="8">
-    </div>
-    <div class="form-group">
-      <label for="player-position">Your position from the dealer:</label>
-      <input type="number" id="player-position" min="1">
-    </div>
-    <button class="primary-btn" onclick="startGame()">Start Game</button>
-  </div>
-  <div id="main-screen" class="screen">
-    <h1>Blackjack Card Counting PWA</h1>
-    <div id="dealer" class="player">
-      <h2 id="dealer-name">Dealer</h2>
-      <div class="cards" id="dealer-cards"></div>
-      <div>Hand Value: <span id="dealer-value">0</span></div>
-    </div>
-    <div id="players-container"></div>
-    <div class="buttons-container">
-      <button class="control-btn" onclick="nextPlayer()">Next Player</button>
-      <button class="control-btn" onclick="roundOver()">Round Over</button>
-      <button class="control-btn" onclick="deckShuffle()">Deck Shuffle</button>
-      <button class="control-btn" onclick="deleteEntry()">Delete Entry</button>
-    </div>
-    <div class="card-buttons">
-      <button onclick="addCard('A')">A</button>
-      <button onclick="addCard('2')">2</button>
-      <button onclick="addCard('3')">3</button>
-      <button onclick="addCard('4')">4</button>
-      <button onclick="addCard('5')">5</button>
-      <button onclick="addCard('6')">6</button>
-      <button onclick="addCard('7')">7</button>
-      <button onclick="addCard('8')">8</button>
-      <button onclick="addCard('9')">9</button>
-      <button onclick="addCard('10')">10</button>
-      <button onclick="addCard('J')">J</button>
-      <button onclick="addCard('Q')">Q</button>
-      <button onclick="addCard('K')">K</button>
-    </div>
-    <div>Running Count: <span id="running-count">0</span></div>
-    <div>Suggested Play: <span id="suggested-play">N/A</span></div>
-  </div>
-  <script src="scripts.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
