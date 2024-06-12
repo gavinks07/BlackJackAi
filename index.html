@@ -7,7 +7,24 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <div id="start-screen" class="container">
+        <h1>Blackjack Card Counting PWA</h1>
+        <div>
+            <label for="player-count">Number of players (excluding dealer):</label>
+            <input type="number" id="player-count" min="1">
+        </div>
+        <div>
+            <label for="deck-count">Number of decks:</label>
+            <input type="number" id="deck-count" min="1">
+        </div>
+        <div>
+            <label for="user-position">Your position from the dealer:</label>
+            <input type="number" id="user-position" min="1">
+        </div>
+        <button id="start-game">Start Game</button>
+    </div>
+
+    <div id="game-screen" class="container hidden">
         <h1>Blackjack Card Counting PWA</h1>
         <div id="game">
             <div id="players">
