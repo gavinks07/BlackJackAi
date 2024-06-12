@@ -1,32 +1,22 @@
-const CACHE_NAME = 'blackjack-cache-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/scripts.js',
-  '/blackjack_model.json',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
-];
-
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        return cache.addAll(urlsToCache);
-      })
-  );
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open('blackjack-pwa-v1').then((cache) => {
+            return cache.addAll([
+                './',
+                './index.html',
+                './styles.css',
+                './scripts.js',
+                './manifest.json',
+                './icon.png'
+            ]);
+        })
+    );
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
+        })
+    );
 });
