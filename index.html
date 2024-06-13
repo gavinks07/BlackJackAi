@@ -3,29 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackjack Card Counting PWA</title>
+    <title>Blackjack AI</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="start-screen" class="container">
-        <h1>Blackjack Card Counting PWA</h1>
+        <h1>Blackjack AI</h1>
         <div>
             <label for="player-count">Number of players (excluding dealer):</label>
-            <input type="number" id="player-count" min="1">
+            <select id="player-count">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </div>
         <div>
             <label for="deck-count">Number of decks:</label>
-            <input type="number" id="deck-count" min="1">
+            <select id="deck-count">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </div>
         <div>
             <label for="user-position">Your position from the dealer:</label>
-            <input type="number" id="user-position" min="1">
+            <select id="user-position">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </div>
         <button id="start-game">Start Game</button>
     </div>
 
     <div id="game-screen" class="container hidden">
-        <h1>Blackjack Card Counting PWA</h1>
+        <h1>Blackjack AI</h1>
         <div id="game">
             <div id="players">
                 <div id="dealer" class="player">Dealer<br><span class="hand-value">Hand Value: 0</span></div>
