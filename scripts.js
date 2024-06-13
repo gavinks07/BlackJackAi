@@ -67,6 +67,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function dealerPlay() {
+        const dealer = players[0];
+        while (updateHandValue(dealer) < 17) {
+            const cardValue = drawCard();
+            dealer.hand.push(cardValue);
+            updateHandValue(dealer);
+
+            runningCount += ['2', '3', '4', '5', '6'].includes(cardValue) ? 1 : 0;
+            runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(cardValue) ? -1 : 0;
+            runningCountSpan.textContent = runningCount;
+        }
+        highlightCurrentPlayer();
+    }
+
+    function nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        if (currentPlayerIndex === 0) {
+            dealerPlay();
+        } else {
+            highlightCurrentPlayer();
+        }
+    }
+
+    document.getElementById('next-player').addEventListener('click', nextPlayer);
+
+    document.getElementById('round-over').addEventListener('click', () => {
+        players.forEach(player => {
+            player.hand = [];
+            player.element.querySelector('.hand-value').textContent = 'Hand Value: 0';
+            player.element.style.textDecoration = '';
+        });
+        currentPlayerIndex = 1;
+        highlightCurrentPlayer();
+    });
+
+    document.getElementById('deck-shuffle').addEventListener('click', () => {
+        runningCount = 0;
+        runningCountSpan.textContent = runningCount;
+        updateSuggestedPlay();
+    });
+
+    document.getElementById('delete-entry').addEventListener('click', () => {
+        const currentPlayer = players[currentPlayerIndex];
+        if (currentPlayer.hand.length > 0) {
+            const lastCard = currentPlayer.hand.pop();
+            updateHandValue(currentPlayer);
+            runningCount += ['2', '3', '4', '5', '6'].includes(lastCard) ? -1 : 0;
+            runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(lastCard) ? 1 : 0;
+            runningCountSpan.textContent = runningCount;
+            updateSuggestedPlay();
+        }
+    });
+
     document.querySelectorAll('.card-btn').forEach(button => {
         button.addEventListener('click', () => {
             const cardValue = button.getAttribute('data-value');
@@ -91,49 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 nextPlayer();
             } else {
-                updateSuggestedPlay();
-            }
-        });
-    });
-
-    function nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        if (currentPlayerIndex === 0) {
-            currentPlayerIndex = 1;
-        }
-        if (currentPlayerIndex === players.length - 1) {
-            currentPlayerIndex = 0; // Switch to dealer's turn after all players have had their turn
-            // Dealer's turn logic here
-        }
-        highlightCurrentPlayer();
-    }
-
-    document.getElementById('next-player').addEventListener('click', nextPlayer);
-
-    document.getElementById('round-over').addEventListener('click', () => {
-        players.forEach(player => {
-            player.hand = [];
-            player.element.querySelector('.hand-value').textContent = 'Hand Value: 0';
-            player.element.style.textDecoration = '';
-        });
-        currentPlayerIndex = 1;
-        highlightCurrentPlayer();
-    });
-
-    document.getElementById('deck-shuffle').addEventListener('click', () => {
-        runningCount = 0;
-        runningCountSpan.textContent = runningCount;
-        updateSuggestedPlay();
-    });
-
-    document.getElementById('delete-entry').addEventListener('click', () => {
-        players.forEach(player => {
-            if (player.hand.length > 0) {
-                const lastCard = player.hand.pop();
-                updateHandValue(player);
-                runningCount += ['2', '3', '4', '5', '6'].includes(lastCard) ? -1 : 0;
-                runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(lastCard) ? 1 : 0;
-                runningCountSpan.textContent = runningCount;
                 updateSuggestedPlay();
             }
         });
