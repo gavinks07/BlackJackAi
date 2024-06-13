@@ -15,30 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPlayerIndex = 1;
     let runningCount = 0;
 
-    const cardValues = {
-        '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
-        'J': 10, 'Q': 10, 'K': 10, 'A': 11
-    };
-
-    const aiModel = JSON.parse(localStorage.getItem('aiModel')) || {};
-
-    function updateAIModel(situation, decision, outcome) {
-        if (!aiModel[situation]) {
-            aiModel[situation] = { H: 0, S: 0 };
-        }
-        aiModel[situation][decision] += outcome ? 1 : -1;
-        localStorage.setItem('aiModel', JSON.stringify(aiModel));
-    }
-
-    function getSuggestedPlay(handValue) {
-        const situation = `${handValue}`;
-        if (!aiModel[situation]) return 'H';
-        return aiModel[situation].H >= aiModel[situation].S ? 'H' : 'S';
-    }
-
     startGameButton.addEventListener('click', () => {
         const playerCount = parseInt(playerCountInput.value);
+        const deckCount = parseInt(deckCountInput.value);
         const userPosition = parseInt(userPositionInput.value);
+
+        initializeDeck(deckCount);
 
         players = [{ name: 'Dealer', hand: [], element: document.getElementById('dealer') }];
         for (let i = 1; i <= playerCount; i++) {
@@ -87,9 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardValue = button.getAttribute('data-value');
             const currentPlayer = players[currentPlayerIndex];
             currentPlayer.hand.push(cardValue);
-            updateHandValue(currentPlayer);
+            const handValue = updateHandValue(currentPlayer);
 
-            const suggestedPlay = getSuggestedPlay(updateHandValue(currentPlayer));
+            const suggestedPlay = getSuggestedPlay(handValue);
             if (suggestedPlay !== 'H') {
                 updateAIModel(currentPlayer.hand.join(','), suggestedPlay, false);
             }
@@ -98,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(cardValue) ? -1 : 0;
             runningCountSpan.textContent = runningCount;
 
-            const handValue = updateHandValue(currentPlayer);
             if (handValue >= 21) {
                 if (handValue === 21) {
                     currentPlayer.element.querySelector('.hand-value').textContent += ' - Blackjack!';
@@ -116,6 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
         if (currentPlayerIndex === 0) {
             currentPlayerIndex = 1;
+        }
+        if (currentPlayerIndex === players.length - 1) {
+            currentPlayerIndex = 0; // Switch to dealer's turn after all players have had their turn
+            // Dealer's turn logic here
         }
         highlightCurrentPlayer();
     }
