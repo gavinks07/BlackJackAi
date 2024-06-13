@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initializeDeck(deckCount);
 
+        // Clear previous players
+        playersDiv.innerHTML = '<div id="dealer" class="player">Dealer<br><span class="hand-value">Hand Value: 0</span></div>';
         players = [{ name: 'Dealer', hand: [], element: document.getElementById('dealer') }];
+        
         for (let i = 1; i <= playerCount; i++) {
             const playerDiv = document.createElement('div');
             playerDiv.classList.add('player');
