@@ -20,6 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
         'J': 10, 'Q': 10, 'K': 10, 'A': 11
     };
 
+    const aiModel = JSON.parse(localStorage.getItem('aiModel')) || {};
+
+    function updateAIModel(situation, decision, outcome) {
+        if (!aiModel[situation]) {
+            aiModel[situation] = { H: 0, S: 0 };
+        }
+        aiModel[situation][decision] += outcome ? 1 : -1;
+        localStorage.setItem('aiModel', JSON.stringify(aiModel));
+    }
+
+    function getSuggestedPlay(handValue) {
+        const situation = `${handValue}`;
+        if (!aiModel[situation]) return 'H';
+        return aiModel[situation].H >= aiModel[situation].S ? 'H' : 'S';
+    }
+
     startGameButton.addEventListener('click', () => {
         const playerCount = parseInt(playerCountInput.value);
         const userPosition = parseInt(userPositionInput.value);
@@ -55,38 +71,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSuggestedPlay() {
-        suggestedPlaySpan.textContent = runningCount > 0 ? 'S' : 'H';
-    }
-
-    function nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        highlightCurrentPlayer();
+        const currentPlayer = players[currentPlayerIndex];
+        const handValue = updateHandValue(currentPlayer);
+        suggestedPlaySpan.textContent = getSuggestedPlay(handValue);
     }
 
     function highlightCurrentPlayer() {
         players.forEach((player, index) => {
-            player.element.style.backgroundColor = index === currentPlayerIndex ? '#1abc9c' : '';
+            player.element.style.backgroundColor = index === currentPlayerIndex ? '#2980b9' : '';
         });
     }
 
-    document.querySelectorAll('.card-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const cardValue = btn.getAttribute('data-value');
+    document.querySelectorAll('.card-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const cardValue = button.getAttribute('data-value');
             const currentPlayer = players[currentPlayerIndex];
             currentPlayer.hand.push(cardValue);
-            const handValue = updateHandValue(currentPlayer);
+            updateHandValue(currentPlayer);
+
+            const suggestedPlay = getSuggestedPlay(updateHandValue(currentPlayer));
+            if (suggestedPlay !== 'H') {
+                updateAIModel(currentPlayer.hand.join(','), suggestedPlay, false);
+            }
+
             runningCount += ['2', '3', '4', '5', '6'].includes(cardValue) ? 1 : 0;
             runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(cardValue) ? -1 : 0;
             runningCountSpan.textContent = runningCount;
-            updateSuggestedPlay();
-            if (handValue > 21) {
-                currentPlayer.element.style.textDecoration = 'line-through';
+
+            const handValue = updateHandValue(currentPlayer);
+            if (handValue >= 21) {
+                if (handValue === 21) {
+                    currentPlayer.element.querySelector('.hand-value').textContent += ' - Blackjack!';
+                } else {
+                    currentPlayer.element.style.textDecoration = 'line-through';
+                }
                 nextPlayer();
+            } else {
+                updateSuggestedPlay();
             }
         });
     });
 
+    function nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        if (currentPlayerIndex === 0) {
+            currentPlayerIndex = 1;
+        }
+        highlightCurrentPlayer();
+    }
+
     document.getElementById('next-player').addEventListener('click', nextPlayer);
+
     document.getElementById('round-over').addEventListener('click', () => {
         players.forEach(player => {
             player.hand = [];
@@ -96,20 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayerIndex = 1;
         highlightCurrentPlayer();
     });
+
     document.getElementById('deck-shuffle').addEventListener('click', () => {
         runningCount = 0;
         runningCountSpan.textContent = runningCount;
         updateSuggestedPlay();
     });
+
     document.getElementById('delete-entry').addEventListener('click', () => {
-        const currentPlayer = players[currentPlayerIndex];
-        if (currentPlayer.hand.length > 0) {
-            const lastCard = currentPlayer.hand.pop();
-            updateHandValue(currentPlayer);
-            runningCount += ['2', '3', '4', '5', '6'].includes(lastCard) ? -1 : 0;
-            runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(lastCard) ? 1 : 0;
-            runningCountSpan.textContent = runningCount;
-            updateSuggestedPlay();
-        }
+        players.forEach(player => {
+            if (player.hand.length > 0) {
+                const lastCard = player.hand.pop();
+                updateHandValue(player);
+                runningCount += ['2', '3', '4', '5', '6'].includes(lastCard) ? -1 : 0;
+                runningCount += ['10', 'J', 'Q', 'K', 'A'].includes(lastCard) ? 1 : 0;
+                runningCountSpan.textContent = runningCount;
+                updateSuggestedPlay();
+            }
+        });
     });
 });
